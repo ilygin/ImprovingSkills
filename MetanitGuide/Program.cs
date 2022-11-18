@@ -7,7 +7,8 @@ app.Run(HandleRequest);
 app.Run();
 async Task HandleRequest(HttpContext context)
 {
-    var response = context.Response;
-    response.ContentType= "text/html";
-    await context.Response.WriteAsync("<h2>Hello METANIT.COM</h2>");
+    var acceptHeaderValue = context.Request.Headers.Accept;
+    string path = context.Request.Path;
+    await context.Response.WriteAsync($"Accept: {acceptHeaderValue}");
+    await context.Response.WriteAsync($"\n Path: {path}");
 }
