@@ -3,12 +3,31 @@ var app = builder.Build();
 
 //app.MapGet("/", () => "Hello World!");
 
-app.Run(HandleRequest);
-app.Run();
-async Task HandleRequest(HttpContext context)
+app.Run(async (context) =>
 {
-    var acceptHeaderValue = context.Request.Headers.Accept;
-    string path = context.Request.Path;
-    await context.Response.WriteAsync($"Accept: {acceptHeaderValue}");
-    await context.Response.WriteAsync($"\n Path: {path}");
-}
+    context.Response.ContentType = "text/html; charset=utf-8";
+
+    if (context.Request.Path == "/postuser")
+    {
+        var form = context.Request.Form;
+        string? name = form["name"];
+        string[]? languages = form["languages"];
+        string[]? selectLanguages = form["selectLanguages"];
+        string? age = form["age"];
+        await context.Response.WriteAsync($"<div><p>Name: {name}</p><p>Age: {age}</p></div><br>");
+        if(selectLanguages?.Length>0)
+        {
+            foreach (string? leng in selectLanguages)
+            {
+                await context.Response.WriteAsync($"{leng}  ");
+            }
+        }
+        
+    }
+    else
+    {
+        await context.Response.SendFileAsync("html/index.html");
+    }
+});
+
+app.Run();
