@@ -2,7 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 //app.MapGet("/", () => "Hello World!");
-
+/*
 app.Run(async (context) =>
 {
     context.Response.ContentType = "text/html; charset=utf-8";
@@ -29,5 +29,23 @@ app.Run(async (context) =>
         await context.Response.SendFileAsync("html/index.html");
     }
 });
+*/
 
+//Переадресация
+app.Run(async (context) =>
+{
+    if (context.Request.Path == "/MyFirstPage")
+    {
+        context.Response.Redirect("/NewPage");
+
+    }
+    else if (context.Request.Path == "/NewPage")
+    {
+        await context.Response.WriteAsync("NewPage");
+    }
+    else
+    {
+        await context.Response.WriteAsync("MainPage");
+    }
+});
 app.Run();
