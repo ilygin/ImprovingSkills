@@ -1,3 +1,6 @@
+using System;
+using System.Text.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
@@ -32,6 +35,7 @@ app.Run(async (context) =>
 */
 
 //Переадресация
+/*
 app.Run(async (context) =>
 {
     if (context.Request.Path == "/MyFirstPage")
@@ -46,6 +50,37 @@ app.Run(async (context) =>
     else
     {
         await context.Response.WriteAsync("MainPage");
+    }
+});*/
+
+//Отправка и получение json
+app.Run(async (context) =>
+{
+
+    var resp = context.Response;
+    var req = context.Request;
+    string requestPath = req.Path;
+    if (requestPath.EndsWith("/user"))
+    {
+        string msg = "inccorect data";
+        try
+        {
+            var optiions = new JsonSerializerOptions();
+            optiions.Converters.Add(new PersonConverter());
+
+            var person = await req.ReadFromJsonAsync<Person>(optiions);
+            if (person != null)
+            {
+                msg = $"Name: {person.Name}  Age: {person.Age}";
+            }
+        }
+        catch { }
+        await resp.WriteAsJsonAsync(new { text = msg });
+    }
+    else
+    {
+        resp.ContentType = "text/html";
+        await resp.SendFileAsync("html/index.html");
     }
 });
 app.Run();

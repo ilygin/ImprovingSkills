@@ -6,25 +6,32 @@
 </head>
 <body>
     <h2>User form</h2>
-    <form method="post" action="postuser">
-        <p>Name: <input name="name" /></p>
-        <p>Age: <input name="age" type="number" /></p>
+    <div id="message"></div>
+    <div>
         <p>
-            Languages:<br />
-            <input name="languages" /><br />
-            <input name="languages" /><br />
-            <input name="languages" /><br />
+            Name: <br />
+            <input name="userName" id="userName" />
         </p>
         <p>
-            Select Languages:<br />
-            <select multiple name="selectLanguages">
-                <option>C#</option>
-                <option>JavaScript</option>
-                <option>Kotlin</option>
-                <option>Java</option>
-            </select>
+            Age: <br />
+            <input name="userAge" id="userAge" type="number" />
         </p>
-        <input type="submit" value="Send" />
-    </form>
+        <button id="sendBtn">Send</button>
+    </div>
+    <script>
+        document.getElementById("sendBtn").addEventListener("click", send);
+        async function send() {
+            const response = await fetch("/api/user", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: document.getElementById("userName").value,
+                    age: document.getElementById("userAge").value
+                })
+            });
+            const message = await response.json();
+            document.getElementById("message").innerText = message.text;
+        }
+    </script>
 </body>
 </html>
